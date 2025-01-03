@@ -19,8 +19,10 @@
         }
 
         h1 {
-            margin-top: 20px;
-            font-size: 24px;
+            /* margin-top: 20px; */
+          
+
+            padding-bottom:2rem;
         }
 
         #canvas-container {
@@ -47,9 +49,8 @@
         .file-upload-container {
             display: flex;
             flex-direction: column;
-            align-self: first baseline;
             align-items: center;
-            margin-bottom: 20px;
+          
         }
 
         .file-upload-container button {
@@ -60,7 +61,7 @@
             padding: 10px 20px;
             cursor: pointer;
             font-size: 14px;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.2s ease;
         }
 
         .file-upload-container button:hover {
@@ -134,23 +135,24 @@
             gap: 2rem;
 
         }
+        #delete-button {
+            display:none;
+            z-index:100;
+            position:absolute;
+            left:0px;
+            top:0px;
+        }
+        #clear-chart-button:hover {
+            background: #d75555;
+        }
     </style>
 </head>
 <body>
-    <h1>Alignment Chart Tool</h1>
+    <button id="delete-button" onclick="deleteImage()">Delete</button>
     <div class="outer-container">
         <div id="controls">
-            <div class="file-upload-container">
-                <label for="image-upload">
-                    <button id="upload-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="height: 1rem; width: 1rem;">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                        
-                        <span>Add Image</span></button>
-                </label>
-                <input type="file" id="image-upload" accept="image/*" />
-            </div>
+            <h1>Alignment Chart Tool</h1>
+            
 
             <div id="axis-controls">
                 
@@ -177,9 +179,21 @@
             </div>
 
             <div id="action-buttons">
+            
+                <div class="file-upload-container">
+                    <label for="image-upload">
+                        <button id="upload-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="height: 1rem; width: 1rem;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            <span>Add Image</span></button>
+                    </label>
+                    <input type="file" id="image-upload" accept="image/*" multiple/>
+                </div>
                 <button onclick="downloadCanvas()">Download Chart</button>
-                <button onclick="clearImages()">Clear Chart</button>
+                <button id="clear-chart-button" onclick="clearImages()">Clear Chart</button>
             </div>
+            <p>*right click on an image to delete</p>
         </div>
 
         <div id="canvas-container">
@@ -190,8 +204,10 @@
     <script>
         const canvas = document.getElementById('alignment-chart');
         const ctx = canvas.getContext('2d');
+        const deleteButton = document.getElementById("delete-button");
         let images = [];
         let draggingImage = null;
+        let potentialDeleteImageIdx = null
         let offsetX, offsetY;
         let imageSize = 75;
 
@@ -250,14 +266,16 @@
 
         // Handle image upload
         document.getElementById('image-upload').addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
+            for(const file of event.target.files) {
+                if(!file) continue
+            
                 const img = new Image();
                 img.onload = () => {
                     images.push({ image: img, x: canvas.width / 2 - imageSize / 2, y: canvas.height / 2 - imageSize / 2 });
                     drawAxes();
                 };
                 img.src = URL.createObjectURL(file);
+            
             }
         });
 
@@ -277,6 +295,9 @@
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
 
+            
+            deleteButton.style.display = "";
+
             for (const img of images) {
                 if (
                     x >= img.x &&
@@ -287,6 +308,33 @@
                     draggingImage = img;
                     offsetX = x - img.x;
                     offsetY = y - img.y;
+                    return;
+                }
+            }
+
+        });
+        canvas.addEventListener('contextmenu', (event) => {
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            for (let i = 0; i < images.length; i++) {
+                const img = images[i]
+                if (
+                    x >= img.x &&
+                    x <= img.x + imageSize &&
+                    y >= img.y &&
+                    y <= img.y + imageSize
+                ) {
+        
+                    
+                    event.preventDefault()
+            
+                    deleteButton.style.display = "block";
+                    deleteButton.style.left = (event.pageX - 10)+"px";
+                    deleteButton.style.top = (event.pageY - 10)+"px";
+                    potentialDeleteImageIdx = i
                     return;
                 }
             }
@@ -325,6 +373,15 @@
         function clearImages() {
             images = [];
             drawAxes();
+        }
+
+        function deleteImage() {
+            //swap and pop
+            images[potentialDeleteImageIdx] = images[images.length - 1]
+            images.pop()
+            drawAxes()
+            deleteButton.style.display = "";
+
         }
 
         // Initialize
