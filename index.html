@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,37 +21,45 @@
 
         h1 {
             /* margin-top: 20px; */
-          
 
-            padding-bottom:2rem;
+
+            padding-bottom: 2rem;
         }
 
         #canvas-container {
             position: relative;
-            border: 2px solid #444;
-            /* margin: 20px 0; */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            /* border: 2px solid #444; */
+            border-radius: 4px;
+
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            height: calc(100vh - 4rem);
+            width: calc(100vh - 4rem);
         }
 
         canvas {
+            border-radius: 4px;
+
             background-color: #1e1e1e;
+            width: 100%;
+
+            height: 100%;
         }
 
         #controls {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 2rem;
             background-color: #1e1e1e;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         .file-upload-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-          
+
         }
 
         .file-upload-container button {
@@ -85,8 +94,8 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-           
-        
+
+
             margin-bottom: 20px;
         }
 
@@ -125,52 +134,53 @@
         button:active {
             background-color: #777;
         }
+
         .outer-container {
             display: flex;
             width: 100%;
             padding-top: 2rem;
-            flex-direction: row;
+            padding-bottom: 2rem;
+            /* flex-direction: row; */
             justify-content: center;
             justify-items: center;
             gap: 2rem;
 
         }
+
         #delete-button {
-            display:none;
-            z-index:100;
-            position:absolute;
-            left:0px;
-            top:0px;
+            display: none;
+            z-index: 100;
+            position: absolute;
+            left: 0px;
+            top: 0px;
         }
+
         #clear-chart-button:hover {
             background: #d75555;
         }
     </style>
 </head>
+
 <body>
     <button id="delete-button" onclick="deleteImage()">Delete</button>
     <div class="outer-container">
         <div id="controls">
             <h1>Alignment Chart Tool</h1>
-            
 
             <div id="axis-controls">
-                
-                    <label for="x-axis">X-Axis: </label>
-                    <input type="text" id="x-axis" placeholder="Enter X-Axis Label" />
-            
-            
-                    <label for="-x-axis">-X-Axis: </label>
-                    <input type="text" id="-x-axis" placeholder="Enter -X-Axis Label" />
-            
-            
-                    <label for="y-axis">Y-Axis: </label>
-                    <input type="text" id="y-axis" placeholder="Enter Y-Axis Label" />
-            
-            
-                    <label for="-y-axis">-Y-Axis: </label>
-                    <input type="text" id="-y-axis" placeholder="Enter -Y-Axis Label" />
-            
+                <label for="y-axis">Top: </label>
+                <input type="text" id="y-axis" placeholder="Enter Top Label" />
+
+
+                <label for="-x-axis">Left: </label>
+                <input type="text" id="-x-axis" placeholder="Enter Left Label" />
+
+                <label for="x-axis">Right: </label>
+                <input type="text" id="x-axis" placeholder="Enter Right Label" />
+
+                <label for="-y-axis">Bottom: </label>
+                <input type="text" id="-y-axis" placeholder="Enter Bottom Label" />
+
             </div>
 
             <div id="size-slider-container">
@@ -179,25 +189,26 @@
             </div>
 
             <div id="action-buttons">
-            
+
                 <div class="file-upload-container">
                     <label for="image-upload">
                         <button id="upload-button">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="height: 1rem; width: 1rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" style="height: 1rem; width: 1rem;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                             </svg>
                             <span>Add Image</span></button>
                     </label>
-                    <input type="file" id="image-upload" accept="image/*" multiple/>
+                    <input type="file" id="image-upload" accept="image/*" multiple />
                 </div>
                 <button onclick="downloadCanvas()">Download Chart</button>
                 <button id="clear-chart-button" onclick="clearImages()">Clear Chart</button>
             </div>
-            <p>*right click an image to delete it</p>
+            <p><i>*right click on images to delete them</i></p>
         </div>
 
         <div id="canvas-container">
-            <canvas id="alignment-chart" width="600" height="600"></canvas>
+            <canvas id="alignment-chart"></canvas>
         </div>
     </div>
 
@@ -205,30 +216,26 @@
         const canvas = document.getElementById('alignment-chart');
         const ctx = canvas.getContext('2d');
         const deleteButton = document.getElementById("delete-button");
+        canvas.height = canvas.clientHeight
+        canvas.width = canvas.clientWidth
         let images = [];
         let draggingImage = null;
         let potentialDeleteImageIdx = null
         let offsetX, offsetY;
-        let imageSize = 75;
+        let imageSize = parseInt(document.getElementById('size-slider').value, 10);
 
         // Draw the axes and labels
         function drawAxes() {
-            const xAxisLabel = document.getElementById('x-axis').value || 'X-Axis';
-            const yAxisLabel = document.getElementById('y-axis').value || 'Y-Axis';
-            const negXAxisLabel = document.getElementById('-x-axis').value || '-X-Axis';
-            const negYAxisLabel = document.getElementById('-y-axis').value || '-Y-Axis';
+            const xAxisLabel = document.getElementById('x-axis').value || 'Right';
+            const yAxisLabel = document.getElementById('y-axis').value || 'Top';
+            const negXAxisLabel = document.getElementById('-x-axis').value || 'Left';
+            const negYAxisLabel = document.getElementById('-y-axis').value || 'Bottom';
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Draw the axes
-            ctx.beginPath();
-            ctx.moveTo(0, canvas.height / 2);
-            ctx.lineTo(canvas.width, canvas.height / 2);
-            ctx.moveTo(canvas.width / 2, 0);
-            ctx.lineTo(canvas.width / 2, canvas.height);
-            ctx.strokeStyle = '#444';
-            ctx.lineWidth = 2;
-            ctx.stroke();
+            drawArrow(0, canvas.height / 2, canvas.width, canvas.height / 2, 10)
+            drawArrow(canvas.width / 2, 0, canvas.width / 2, canvas.height, 10)
+
 
             // Draw images
             for (const img of images) {
@@ -240,24 +247,66 @@
 
             // Add labels
             ctx.fillStyle = '#e0e0e0';
-            ctx.font = '24px Inter';
-            ctx.strokeStyle = '#e0e0e0';
-            ctx.lineWidth = 1.5;
-            ctx.fillText(xAxisLabel, canvas.width - 100, canvas.height / 2 - 10);
-            ctx.strokeText(xAxisLabel, canvas.width - 100, canvas.height / 2 - 10);
+            ctx.font = '20px Inter';
+            
 
-            ctx.fillText(negXAxisLabel, 10, canvas.height / 2 - 10);
-            ctx.strokeText(negXAxisLabel, 10, canvas.height / 2 - 10);
+            ctx.textBaseline = "bottom";
+            ctx.textAlign = "right";
+            ctx.fillText(xAxisLabel, canvas.width - 20, canvas.height / 2 - 10);
+            ctx.textAlign = "left";
+            ctx.fillText(negXAxisLabel, 20, canvas.height / 2 - 10);
 
-            ctx.fillText(yAxisLabel, canvas.width / 2 + 10, 30);
-            ctx.strokeText(yAxisLabel, canvas.width / 2 + 10, 30);
-
-            ctx.fillText(negYAxisLabel, canvas.width / 2 + 10, canvas.height - 15);
-            ctx.strokeText(negYAxisLabel, canvas.width / 2 + 10, canvas.height - 15);
-
-
- 
+            ctx.textBaseline = "top";
+            ctx.fillText(yAxisLabel, canvas.width / 2 + 10, 20);
+            ctx.textBaseline = "bottom";
+            ctx.fillText(negYAxisLabel, canvas.width / 2 + 10, canvas.height - 20);
         }
+
+        function drawArrow(x1, y1, x2, y2, headSize) {
+    // Calculate the angle of the arrow
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const angle = Math.atan2(dy, dx);
+
+    // Calculate the length of the arrow
+    const size = Math.sqrt(dx * dx + dy * dy);
+
+    // Save the current state of the canvas
+    ctx.save();
+
+    // Translate to the starting point and rotate the canvas to the arrow's direction
+    ctx.translate(x1, y1);
+    ctx.rotate(angle);
+
+    // Draw the arrow body
+    ctx.beginPath();
+    ctx.moveTo(headSize, 0); // Start at the base of the arrow
+    ctx.lineTo(size - headSize, 0); // Draw the shaft
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Draw the arrowhead at the end
+    ctx.beginPath();
+    ctx.moveTo(size, 0);
+    ctx.lineTo(size - headSize, headSize);
+    ctx.lineTo(size - headSize, -headSize);
+    ctx.closePath();
+    ctx.fillStyle = "white";
+    ctx.fill();
+
+    // Draw the arrowhead at the start
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(headSize, headSize);
+    ctx.lineTo(headSize, -headSize);
+    ctx.closePath();
+    ctx.fillStyle = "white";
+    ctx.fill();
+
+    // Restore the canvas state
+    ctx.restore();
+}
 
         // Automatically update axes labels
         document.querySelectorAll('#axis-controls input').forEach(input => {
@@ -266,16 +315,16 @@
 
         // Handle image upload
         document.getElementById('image-upload').addEventListener('change', (event) => {
-            for(const file of event.target.files) {
-                if(!file) continue
-            
+            for (const file of event.target.files) {
+                if (!file) continue
+
                 const img = new Image();
                 img.onload = () => {
                     images.push({ image: img, x: canvas.width / 2 - imageSize / 2, y: canvas.height / 2 - imageSize / 2 });
                     drawAxes();
                 };
                 img.src = URL.createObjectURL(file);
-            
+
             }
         });
 
@@ -286,6 +335,11 @@
         // Handle size slider change
         document.getElementById('size-slider').addEventListener('input', (event) => {
             imageSize = parseInt(event.target.value, 10);
+            for (const img of images) {
+                // nudge images away from the sides of the canvas
+                img.x = Math.min(Math.max(img.x, 0), canvas.width - imageSize);
+                img.y = Math.min(Math.max(img.y, 0), canvas.height - imageSize);
+            }
             drawAxes();
         });
 
@@ -295,10 +349,10 @@
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
 
-            
             deleteButton.style.display = "";
-
-            for (const img of images) {
+            // we loop over in reverse order to ensure that images drawn on top are dragged rather than images drawn under them
+            for (let i = images.length - 1; i >= 0; i--) {
+                const img = images[i]
                 if (
                     x >= img.x &&
                     x <= img.x + imageSize &&
@@ -314,12 +368,14 @@
 
         });
         canvas.addEventListener('contextmenu', (event) => {
-            
+
             const rect = canvas.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
+            // we loop over in reverse order to ensure that images drawn on top are deleted 
+            // rather than images drawn under them
 
-            for (let i = 0; i < images.length; i++) {
+            for (let i = images.length - 1; i >= 0; i--) {
                 const img = images[i]
                 if (
                     x >= img.x &&
@@ -327,39 +383,34 @@
                     y >= img.y &&
                     y <= img.y + imageSize
                 ) {
-        
-                    
+
+
                     event.preventDefault()
-            
+
                     deleteButton.style.display = "block";
-                    deleteButton.style.left = (event.pageX - 10)+"px";
-                    deleteButton.style.top = (event.pageY - 10)+"px";
+                    deleteButton.style.left = (event.pageX - 10) + "px";
+                    deleteButton.style.top = (event.pageY - 10) + "px";
                     potentialDeleteImageIdx = i
                     return;
                 }
             }
         });
 
-        canvas.addEventListener('mousemove', (event) => {
+        document.addEventListener('mousemove', (event) => {
             if (draggingImage) {
                 const rect = canvas.getBoundingClientRect();
                 const x = event.clientX - rect.left;
                 const y = event.clientY - rect.top;
 
-                draggingImage.x = x - offsetX;
-                draggingImage.y = y - offsetY;
+                draggingImage.x = Math.min(Math.max(x - offsetX, 0), canvas.width - imageSize);
+                draggingImage.y = Math.min(Math.max(y - offsetY, 0), canvas.height - imageSize);
                 drawAxes();
             }
         });
 
-        canvas.addEventListener('mouseup', () => {
+        document.addEventListener('mouseup', () => {
             draggingImage = null;
         });
-
-        canvas.addEventListener('mouseleave', () => {
-            draggingImage = null;
-        });
-
 
         // Download canvas as image
         function downloadCanvas() {
@@ -385,7 +436,8 @@
         }
 
         // Initialize
-        drawAxes();
+        window.onload = drawAxes;
     </script>
 </body>
+
 </html>
