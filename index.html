@@ -248,7 +248,7 @@
             // Add labels
             ctx.fillStyle = '#e0e0e0';
             ctx.font = '20px Inter';
-            
+
 
             ctx.textBaseline = "bottom";
             ctx.textAlign = "right";
@@ -263,50 +263,50 @@
         }
 
         function drawArrow(x1, y1, x2, y2, headSize) {
-    // Calculate the angle of the arrow
-    const dx = x2 - x1;
-    const dy = y2 - y1;
-    const angle = Math.atan2(dy, dx);
+            // Calculate the angle of the arrow
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const angle = Math.atan2(dy, dx);
 
-    // Calculate the length of the arrow
-    const size = Math.sqrt(dx * dx + dy * dy);
+            // Calculate the length of the arrow
+            const size = Math.sqrt(dx * dx + dy * dy);
 
-    // Save the current state of the canvas
-    ctx.save();
+            // Save the current state of the canvas
+            ctx.save();
 
-    // Translate to the starting point and rotate the canvas to the arrow's direction
-    ctx.translate(x1, y1);
-    ctx.rotate(angle);
+            // Translate to the starting point and rotate the canvas to the arrow's direction
+            ctx.translate(x1, y1);
+            ctx.rotate(angle);
 
-    // Draw the arrow body
-    ctx.beginPath();
-    ctx.moveTo(headSize, 0); // Start at the base of the arrow
-    ctx.lineTo(size - headSize, 0); // Draw the shaft
-    ctx.strokeStyle = "white";
-    ctx.lineWidth = 2;
-    ctx.stroke();
+            // Draw the arrow body
+            ctx.beginPath();
+            ctx.moveTo(headSize, 0); // Start at the base of the arrow
+            ctx.lineTo(size - headSize, 0); // Draw the shaft
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 2;
+            ctx.stroke();
 
-    // Draw the arrowhead at the end
-    ctx.beginPath();
-    ctx.moveTo(size, 0);
-    ctx.lineTo(size - headSize, headSize);
-    ctx.lineTo(size - headSize, -headSize);
-    ctx.closePath();
-    ctx.fillStyle = "white";
-    ctx.fill();
+            // Draw the arrowhead at the end
+            ctx.beginPath();
+            ctx.moveTo(size, 0);
+            ctx.lineTo(size - headSize, headSize);
+            ctx.lineTo(size - headSize, -headSize);
+            ctx.closePath();
+            ctx.fillStyle = "white";
+            ctx.fill();
 
-    // Draw the arrowhead at the start
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(headSize, headSize);
-    ctx.lineTo(headSize, -headSize);
-    ctx.closePath();
-    ctx.fillStyle = "white";
-    ctx.fill();
+            // Draw the arrowhead at the start
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(headSize, headSize);
+            ctx.lineTo(headSize, -headSize);
+            ctx.closePath();
+            ctx.fillStyle = "white";
+            ctx.fill();
 
-    // Restore the canvas state
-    ctx.restore();
-}
+            // Restore the canvas state
+            ctx.restore();
+        }
 
         // Automatically update axes labels
         document.querySelectorAll('#axis-controls input').forEach(input => {
