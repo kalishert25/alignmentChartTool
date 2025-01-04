@@ -1,0 +1,160 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+h1 {
+    /* margin-top: 20px; */
+
+
+    padding-bottom: 2rem;
+}
+
+#canvas-container {
+    position: relative;
+    /* border: 2px solid #444; */
+    border-radius: 4px;
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    height: calc(100vh - 4rem);
+    width: calc(100vh - 4rem);
+    
+}
+
+canvas {
+    border-radius: 4px;
+
+    background-color: #1e1e1e;
+    width: 100%;
+
+    height: 100%;
+}
+
+#controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background-color: #1e1e1e;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.file-upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.file-upload-container button {
+    background-color: #333;
+    color: #e0e0e0;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.file-upload-container button:hover {
+    background-color: #555;
+}
+
+.file-upload-container input[type="file"] {
+    display: none;
+}
+
+input {
+    /* width: 45%; */
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+#axis-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .5rem;
+
+
+    padding-bottom: 1rem;
+}
+
+#size-slider-container {
+    padding-bottom:1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    
+}
+#size-slider-container label {
+    align-self: center;
+}
+
+#size-slider {
+    width: 100%;
+}
+
+#action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+button {
+    background-color: #333;
+    color: #e0e0e0;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+button:active {
+    background-color: #777;
+}
+
+.outer-container {
+    flex-shrink: 50wh;
+    display: flex;
+    width: 100%;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    /* flex-direction: row; */
+    justify-content: center;
+    justify-items: center;
+    gap: 2rem;
+
+}
+
+#delete-button {
+    display: none;
+    z-index: 100;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+#clear-chart-button:hover {
+    background: #d75555;
+}
