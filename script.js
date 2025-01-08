@@ -24,10 +24,10 @@ function drawAxes() {
 
     // Draw images
     for (const img of images) {
-        const size = Math.min(img.image.width, img.image.height);
-        const sx = (img.image.width - size) / 2;
-        const sy = (img.image.height - size) / 2;
-        ctx.drawImage(img.image, sx, sy, size, size, img.x, img.y, imageSize, imageSize);
+        // const size = Math.min(img.image.width, img.image.height);
+        // const sx = (img.image.width - size) / 2;
+        // const sy = (img.image.height - size) / 2;
+        ctx.drawImage(img.image, 0, 0, img.image.width, img.image.height, img.x, img.y, imageSize, imageSize);
     }
 
     // Add labels
